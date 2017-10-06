@@ -1,0 +1,33 @@
+version: "2"
+services:
+  web:
+    image: nginx:latest
+    ports:
+        - "8085:80"
+    volumes:
+        - ./src:/var/www/html/
+        - ./default.conf:/etc/nginx/conf.d/default.conf
+    links:
+        - php
+  php:
+    image: php:7-fpm
+    volumes:
+        - ./src:/var/www/html/
+  mariadb:
+    image: mariadb:latest
+    volumes:
+      - ./src:/var/www/html/
+    environment:
+      - MYSQL_ROOT_PASSWORD=my-root
+    ports:
+      - "8087:3306"
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    links:
+      - mariadb
+    environment:
+        PMA_HOST: mariadb
+        PMA_PORT: '3306'
+    ports:
+      - "8086:80"
+      
